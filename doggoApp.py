@@ -9,8 +9,13 @@ import datetime
 import imutils
 import time
 import cv2
+<<<<<<< HEAD
 import subprocess
 
+=======
+from winsound import MessageBeep
+MessageBeep(-1)
+>>>>>>> 089b368d6d171e716300f914011e76933684808c
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
