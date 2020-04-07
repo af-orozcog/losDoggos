@@ -9,6 +9,7 @@ import datetime
 import imutils
 import time
 import cv2
+import subprocess
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -74,6 +75,7 @@ while True:
 		(x, y, w, h) = cv2.boundingRect(c)
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 		text = "Occupied"
+		subprocess.call(["afplay", "service-bell_daniel_simion.wav"])
 
 	# draw the text and timestamp on the frame
 	cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
