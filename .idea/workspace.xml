@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a5f20f81-385d-453e-835d-05d5e75cba41" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/doggoApp.py" beforeDir="false" afterPath="$PROJECT_DIR$/doggoApp.py" afterDir="false" />
-    </list>
+    <list default="true" id="a5f20f81-385d-453e-835d-05d5e75cba41" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,12 +100,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1586292304263</updated>
-      <workItem from="1586292305703" duration="1456000" />
+      <workItem from="1586292305703" duration="1737000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1456000" />
+    <option name="totallyTimeSpent" value="1737000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
