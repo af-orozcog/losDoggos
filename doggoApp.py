@@ -4,11 +4,11 @@
 
 # import the necessary packages
 from imutils.video import VideoStream
+from cv2 import *
 import argparse
 import datetime
 import imutils
 import time
-import cv2
 import random
 import platform
 import winsound
