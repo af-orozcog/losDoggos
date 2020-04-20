@@ -87,25 +87,11 @@ while True:
         text = "Occupied"
         actual = int(round(time.time() * 1000))
         if(millis == None):
-            cam = VideoCapture(0)   # 0 -> index of camera
-            s, img = cam.read()
-            if s:    # frame captured without any errors
-                namedWindow("cam-test",CV_WINDOW_AUTOSIZE)
-                imshow("cam-test",img)
-                waitKey(0)
-                destroyWindow("cam-test")
-                imwrite("tomada" + str(ids)+ ".jpg",img) #save image
+            cv2.imwrite("taken" + str(id)+".jpg",frame)
             millis = actual
             ids += 1
         elif(actual - millis >= 120000):
-            cam = VideoCapture(0)   # 0 -> index of camera
-            s, img = cam.read()
-            if s:    # frame captured without any errors
-                namedWindow("cam-test",CV_WINDOW_AUTOSIZE)
-                imshow("cam-test",img)
-                waitKey(0)
-                destroyWindow("cam-test")
-                imwrite("tomada" + str(ids)+ ".jpg",img) #save image
+            cv2.imwrite("taken" + str(id)+".jpg",frame)
             millis = actual
             ids += 1
         if(platform.system() == 'Windows'):
