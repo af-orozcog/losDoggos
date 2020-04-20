@@ -13,6 +13,7 @@ import random
 import platform
 import winsound
 import subprocess
+import time
 
 possible_names = ["Gordo.wav","Juguete.wav","Pisadas.wav","Puerta.wav","Rocky.wav","Timbre.wav","service-bell_daniel_simion.wav"]
 
@@ -35,6 +36,9 @@ else:
 # initialize the first frame in the video stream
 firstFrame = None
 
+ids = 0
+millis = None
+
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
@@ -42,7 +46,7 @@ while True:
     frame = vs.read()
     frame = frame if args.get("video", None) is None else frame[1]
     text = "Unoccupied"
-
+    millis = None
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -81,6 +85,29 @@ while True:
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = "Occupied"
+        actual = int(round(time.time() * 1000))
+        if(millis == None):
+            cam = VideoCapture(0)   # 0 -> index of camera
+            s, img = cam.read()
+            if s:    # frame captured without any errors
+                namedWindow("cam-test",CV_WINDOW_AUTOSIZE)
+                imshow("cam-test",img)
+                waitKey(0)
+                destroyWindow("cam-test")
+                imwrite("tomada" + str(ids)+ ".jpg",img) #save image
+            millis = actual
+            ids += 1
+        elif(actual - millis >= 120000):
+            cam = VideoCapture(0)   # 0 -> index of camera
+            s, img = cam.read()
+            if s:    # frame captured without any errors
+                namedWindow("cam-test",CV_WINDOW_AUTOSIZE)
+                imshow("cam-test",img)
+                waitKey(0)
+                destroyWindow("cam-test")
+                imwrite("tomada" + str(ids)+ ".jpg",img) #save image
+            millis = actual
+            ids += 1
         if(platform.system() == 'Windows'):
             print("wtf is happening")
             winsound.PlaySound(random.choice(possible_names),winsound.SND_ASYNC)
