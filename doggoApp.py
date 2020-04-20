@@ -87,16 +87,21 @@ while True:
         text = "Occupied"
         actual = int(round(time.time() * 1000))
         if(millis == None):
-            cv2.imwrite("taken" + str(id)+".jpg",frame)
+            currentDT = datetime.datetime.now()
+            print("enter?2")
+            cv2.imwrite("taken" +str(currentDT.minute) +".jpg",frame)
             millis = actual
             ids += 1
-        elif(actual - millis >= 120000):
-            cv2.imwrite("taken" + str(id)+".jpg",frame)
+        elif(actual - millis >= 5000):
+            currentDT = datetime.datetime.now()
+            print("enter?1")
+            cv2.imwrite("taken" + str(currentDT.minute)+".jpg",frame)
             millis = actual
             ids += 1
         if(platform.system() == 'Windows'):
-            print("wtf is happening")
-            winsound.PlaySound(random.choice(possible_names),winsound.SND_ASYNC)
+            pass
+            #print("wtf is happening")
+            #winsound.PlaySound(random.choice(possible_names),winsound.SND_ASYNC)
         elif (platform.system() == 'Linux'):
             subprocess.call(["aplay", random.choice(possible_names)])
         else:
