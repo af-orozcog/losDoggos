@@ -88,16 +88,12 @@ while True:
         actual = int(round(time.time() * 1000))
         if(millis == None):
             currentDT = datetime.datetime.now()
-            print("enter?2")
-            cv2.imwrite("taken" +str(currentDT.minute) +".jpg",frame)
+            cv2.imwrite("taken"+str(currentDT.year)+str(currentDT.month)+str(currentDT.day)+ str(currentDT.hour)+str(currentDT.minute) +".jpg",frame)
             millis = actual
-            ids += 1
         elif(actual - millis >= 5000):
             currentDT = datetime.datetime.now()
-            print("enter?1")
-            cv2.imwrite("taken" + str(currentDT.minute)+".jpg",frame)
+            cv2.imwrite("taken"+str(currentDT.year)+str(currentDT.month)+str(currentDT.day)+ str(currentDT.hour)+str(currentDT.minute) +".jpg",frame)
             millis = actual
-            ids += 1
         if(platform.system() == 'Windows'):
             pass
             #print("wtf is happening")
