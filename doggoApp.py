@@ -30,14 +30,13 @@ possible_names = ["Gordo.wav", "Juguete.wav", "Pisadas.wav", "Puerta.wav", "Rock
 def sendmail(lista):
     sender_email = 'danielgalindoruiz7@gmail.com'
     reciever_email = 'd.galindo@uniandes.edu.co'
-    email_body = 'Se vio al perro '
     password = 'Mldymgia2019.'
     msg = MIMEMultipart()
     msg['To'] = formataddr(('Daniel G', reciever_email))
     msg['From'] = formataddr(('Daniel G', sender_email))
     msg['Subject'] = 'Hello, my friend Daniel'
-    print("Sending the email...")
-    msg_content = MIMEText('send with attachment...', 'plain', 'utf-8')
+    print("Enviando correo...")
+    msg_content = MIMEText('Su mascota intentó entrar', 'plain', 'utf-8')
     msg.attach(msg_content)
     #filename = nombres_fotos[len(nombres_fotos)-1]
     try:
@@ -52,7 +51,7 @@ def sendmail(lista):
                 msg.attach(part)
 
     except Exception as e:
-        print(f'Oh no! We didnt found the attachment!n{e}')
+        print(f'No se encontro el archivo n{e}')
     try:
         # Creating a SMTP session | use 587 with TLS, 465 SSL and 25
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -65,9 +64,9 @@ def sendmail(lista):
         server.sendmail(sender_email, reciever_email, msg.as_string())
         print('Email sent!')
     except Exception as e:
-        print(f'Oh no! Something bad happened!n {e}')
+        print(f'Error en correo {e}')
     finally:
-        print('Closing the server...')
+        print('Cerrando el servidor...')
 
 
 
@@ -91,6 +90,7 @@ firstFrame = None
 
 ids = 0
 millis = None
+nombres_fotos = []
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
@@ -99,7 +99,6 @@ while True:
     frame = frame if args.get("video", None) is None else frame[1]
     text = "Unoccupied"
     millis = None
-    nombres_fotos = []
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -164,7 +163,7 @@ while True:
             subprocess.call(["aplay", random.choice(possible_names)])
         else:
             subprocess.call(["afplay", random.choice(possible_names)])
-    sendmail(nombres_fotos)
+
     # draw the text and timestamp on the frame
     cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
@@ -181,6 +180,7 @@ while True:
     if key == ord("q"):
         break
 
+sendmail(nombres_fotos)
 # cleanup the camera and close any open windows
 vs.stop() if args.get("video", None) is None else vs.release()
 cv2.destroyAllWindows()
