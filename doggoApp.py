@@ -3,6 +3,13 @@
 # python motion_detector.py --video videos/example_01.mp4
 
 # import the necessary packages
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.utils import formataddr
+from email.mime.multipart import MIMEMultipart  # New line
+from email.mime.base import MIMEBase  # New line
+from email import encoders  # New line
 from imutils.video import VideoStream
 from cv2 import *
 import argparse
@@ -15,7 +22,53 @@ import winsound
 import subprocess
 import time
 
-possible_names = ["Gordo.wav","Juguete.wav","Pisadas.wav","Puerta.wav","Rocky.wav","Timbre.wav","service-bell_daniel_simion.wav"]
+possible_names = ["Gordo.wav", "Juguete.wav", "Pisadas.wav", "Puerta.wav", "Rocky.wav", "Timbre.wav",
+                  "service-bell_daniel_simion.wav"]
+
+
+
+def sendmail(lista):
+    sender_email = 'danielgalindoruiz7@gmail.com'
+    reciever_email = 'd.galindo@uniandes.edu.co'
+    email_body = 'Se vio al perro '
+    password = 'Mldymgia2019.'
+    msg = MIMEMultipart()
+    msg['To'] = formataddr(('Daniel G', reciever_email))
+    msg['From'] = formataddr(('Daniel G', sender_email))
+    msg['Subject'] = 'Hello, my friend Daniel'
+    print("Sending the email...")
+    msg_content = MIMEText('send with attachment...', 'plain', 'utf-8')
+    msg.attach(msg_content)
+    #filename = nombres_fotos[len(nombres_fotos)-1]
+    try:
+        for filename in lista:
+            with open(filename, "rb") as attachment:
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+
+                # Add header as key/value pair to attachment part
+                part.add_header("Content-Disposition", f"attachment; filename= {filename}", )
+                msg.attach(part)
+
+    except Exception as e:
+        print(f'Oh no! We didnt found the attachment!n{e}')
+    try:
+        # Creating a SMTP session | use 587 with TLS, 465 SSL and 25
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        # Encrypts the email
+        context = ssl.create_default_context()
+        server.starttls(context=context)
+        # We log in into our Google account
+        server.login(sender_email, password)
+        # Sending email from sender, to receiver with the email body
+        server.sendmail(sender_email, reciever_email, msg.as_string())
+        print('Email sent!')
+    except Exception as e:
+        print(f'Oh no! Something bad happened!n {e}')
+    finally:
+        print('Closing the server...')
+
 
 
 # construct the argument parser and parse the arguments
@@ -38,7 +91,6 @@ firstFrame = None
 
 ids = 0
 millis = None
-
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
@@ -47,6 +99,7 @@ while True:
     frame = frame if args.get("video", None) is None else frame[1]
     text = "Unoccupied"
     millis = None
+    nombres_fotos = []
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -71,9 +124,8 @@ while True:
     # on thresholded image
     thresh = cv2.dilate(thresh, None, iterations=2)
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-        cv2.CHAIN_APPROX_SIMPLE)
+                            cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
-
     # loop over the contours
     for c in cnts:
         # if the contour is too small, ignore it
@@ -86,27 +138,38 @@ while True:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = "Occupied"
         actual = int(round(time.time() * 1000))
-        if(millis == None):
+        if (millis == None):
             currentDT = datetime.datetime.now()
-            cv2.imwrite("taken"+str(currentDT.year)+str(currentDT.month)+str(currentDT.day)+ str(currentDT.hour)+str(currentDT.minute) +".jpg",frame)
+            name = "taken" + str(currentDT.year) + str(currentDT.month) + str(currentDT.day) + str(
+                currentDT.hour) + str(
+                currentDT.minute) + ".jpg"
+            cv2.imwrite(name, frame)
+            nombres_fotos.append(name)
             millis = actual
-        elif(actual - millis >= 5000):
+
+        elif (actual - millis >= 5000):
             currentDT = datetime.datetime.now()
-            cv2.imwrite("taken"+str(currentDT.year)+str(currentDT.month)+str(currentDT.day)+ str(currentDT.hour)+str(currentDT.minute) +".jpg",frame)
+            name = "taken" + str(currentDT.year) + str(currentDT.month) + str(currentDT.day) + str(
+                currentDT.hour) + str(
+                currentDT.minute) + ".jpg"
+            cv2.imwrite(name, frame)
+            nombres_fotos.append(name)
             millis = actual
-        if(platform.system() == 'Windows'):
+
+        if (platform.system() == 'Windows'):
             pass
-            #print("wtf is happening")
-            #winsound.PlaySound(random.choice(possible_names),winsound.SND_ASYNC)
+            # print("wtf is happening")
+            # winsound.PlaySound(random.choice(possible_names),winsound.SND_ASYNC)
         elif (platform.system() == 'Linux'):
             subprocess.call(["aplay", random.choice(possible_names)])
         else:
             subprocess.call(["afplay", random.choice(possible_names)])
+    sendmail(nombres_fotos)
     # draw the text and timestamp on the frame
     cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
-        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-        (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+                (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
     # show the frame and record if the user presses a key
     cv2.imshow("Security Feed", frame)
