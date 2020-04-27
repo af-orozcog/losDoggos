@@ -27,16 +27,22 @@ possible_names = ["Gordo.wav", "Juguete.wav", "Pisadas.wav", "Puerta.wav", "Rock
 
 
 
-def sendmail(lista):
-    sender_email = 'danielgalindoruiz7@gmail.com'
+def sendmail(lista, tiempos):
+    sender_email = 'goricrates@gmail.com'
     reciever_email = 'd.galindo@uniandes.edu.co'
-    password = 'Mldymgia2019.'
+    password = 'Chicago2019'
     msg = MIMEMultipart()
     msg['To'] = formataddr(('Daniel G', reciever_email))
     msg['From'] = formataddr(('Daniel G', sender_email))
     msg['Subject'] = 'Hello, my friend Daniel'
     print("Enviando correo...")
-    msg_content = MIMEText('Su mascota intentó entrar', 'plain', 'utf-8')
+    mensaje = 'Su mascota intentó entrar - me re cago en la vida :v'
+    mensaje += "\nintento entrar : " + str(len(tiempos)) + " veces\npara cada vez que visito la zona prohibida estuvo:\n"
+    for i in range(0,len(tiempos)):
+        mensaje += str(i+1) + " : " + str(tiempos[i])+" minutos\n"
+    mensaje += "wtf is happening"
+    print(mensaje)
+    msg_content = MIMEText(mensaje, 'plain', 'utf-8')
     msg.attach(msg_content)
     #filename = nombres_fotos[len(nombres_fotos)-1]
     try:
@@ -91,6 +97,9 @@ firstFrame = None
 ids = 0
 millis = None
 nombres_fotos = []
+tiempos = []
+oc = False
+inside = False
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
@@ -98,7 +107,8 @@ while True:
     frame = vs.read()
     frame = frame if args.get("video", None) is None else frame[1]
     text = "Unoccupied"
-    millis = None
+    oc = False
+    actual = int(round(time.time() * 1000))
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -136,8 +146,9 @@ while True:
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = "Occupied"
+        oc = True
         actual = int(round(time.time() * 1000))
-        if (millis == None):
+        if (inside == False):
             currentDT = datetime.datetime.now()
             name = "taken" + str(currentDT.year) + str(currentDT.month) + str(currentDT.day) + str(
                 currentDT.hour) + str(
@@ -145,15 +156,7 @@ while True:
             cv2.imwrite(name, frame)
             nombres_fotos.append(name)
             millis = actual
-
-        elif (actual - millis >= 5000):
-            currentDT = datetime.datetime.now()
-            name = "taken" + str(currentDT.year) + str(currentDT.month) + str(currentDT.day) + str(
-                currentDT.hour) + str(
-                currentDT.minute) + ".jpg"
-            cv2.imwrite(name, frame)
-            nombres_fotos.append(name)
-            millis = actual
+            inside = True
 
         if (platform.system() == 'Windows'):
             pass
@@ -163,6 +166,11 @@ while True:
             subprocess.call(["aplay", random.choice(possible_names)])
         else:
             subprocess.call(["afplay", random.choice(possible_names)])
+
+    actual = int(round(time.time() * 1000))
+    if(oc == False and inside == True):
+        tiempos.append((actual-millis)/6000)
+        inside = False
 
     # draw the text and timestamp on the frame
     cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
@@ -180,7 +188,7 @@ while True:
     if key == ord("q"):
         break
 
-sendmail(nombres_fotos)
+sendmail(nombres_fotos,tiempos)
 # cleanup the camera and close any open windows
 vs.stop() if args.get("video", None) is None else vs.release()
 cv2.destroyAllWindows()
