@@ -36,7 +36,7 @@ def sendmail(lista, tiempos):
     msg['From'] = formataddr(('Daniel G', sender_email))
     msg['Subject'] = 'Hello, my friend Daniel'
     print("Enviando correo...")
-    mensaje = 'Su mascota intentó entrar - me re cago en la vida :v'
+    mensaje = 'Su mascota intentó entrar '
     mensaje += "\nintento entrar : " + str(len(tiempos)) + " veces\npara cada vez que visito la zona prohibida estuvo:\n"
     for i in range(0,len(tiempos)):
         mensaje += str(i+1) + " : " + str(tiempos[i])+" minutos\n"
